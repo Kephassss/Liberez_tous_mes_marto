@@ -1,0 +1,863 @@
+:root {
+    --bg-color: #020202;
+    --text-color: #f0f0f0;
+    --accent-color: #c084fc;
+    /* Intense Purple */
+    --accent-secondary: #4ade80;
+    /* Toxic Green for success/matrix vibes */
+    --accent-glow: 0 0 20px rgba(192, 132, 252, 0.5);
+    --glass-bg: rgba(20, 20, 25, 0.4);
+    --border-color: rgba(255, 255, 255, 0.08);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+#stormCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.container {
+    z-index: 10;
+    width: 100%;
+    max-width: 650px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    position: relative;
+    overflow: visible;
+    /* Allow hammers to stick out if needed, or hidden if keeping contained */
+}
+
+.hammer-decor {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 90vh;
+    /* Big hammers */
+    z-index: 5;
+    /* Behind container text but strictly speaking, if container has bg, this needs to be outside or carefully managed. */
+    /* Let's put them outside the container in HTML, or use fixed position. */
+    /* Actually, fixed position relative to viewport might be best for "framing" the app */
+    width: auto;
+    width: auto;
+    /* mix-blend-mode: lighten; REMOVED for transparent PNG */
+    /* Better for hiding imperfect black backgrounds */
+    /* Remove black background from generation */
+    opacity: 0.9;
+    /* Slight opacity boost */
+    pointer-events: auto;
+    /* Allow clicking */
+    cursor: pointer;
+    filter: drop-shadow(0 0 20px var(--accent-color));
+    transition: filter 0.3s;
+}
+
+.hammer-decor:hover {
+    filter: drop-shadow(0 0 40px var(--accent-color));
+    opacity: 0.8;
+}
+
+/* Strike Animations */
+@keyframes strikeLeft {
+    0% {
+        transform: translateY(-50%) rotate(-15deg);
+    }
+
+    40% {
+        transform: translateY(-50%) rotate(40deg);
+    }
+
+    /* Wind up back */
+    50% {
+        transform: translateY(-50%) rotate(-45deg);
+    }
+
+    /* SMASH forward */
+    60% {
+        transform: translateY(-50%) rotate(-45deg);
+    }
+
+    /* Hold */
+    100% {
+        transform: translateY(-50%) rotate(-15deg);
+    }
+
+    /* Return */
+}
+
+@keyframes strikeRight {
+    0% {
+        transform: translateY(-50%) scaleX(-1) rotate(-15deg);
+    }
+
+    40% {
+        transform: translateY(-50%) scaleX(-1) rotate(40deg);
+    }
+
+    50% {
+        transform: translateY(-50%) scaleX(-1) rotate(-45deg);
+    }
+
+    60% {
+        transform: translateY(-50%) scaleX(-1) rotate(-45deg);
+    }
+
+    100% {
+        transform: translateY(-50%) scaleX(-1) rotate(-15deg);
+    }
+}
+
+.hammer-left.striking {
+    animation: strikeLeft 0.6s ease-in-out !important;
+}
+
+.hammer-right.striking {
+    animation: strikeRight 0.6s ease-in-out !important;
+}
+
+
+
+/* Subtle top highlight */
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+/* Animations */
+@keyframes floatLeft {
+
+    0%,
+    100% {
+        transform: translateY(-50%) rotate(-15deg);
+    }
+
+    50% {
+        transform: translateY(-54%) rotate(-10deg);
+    }
+}
+
+@keyframes floatRight {
+
+    0%,
+    100% {
+        transform: translateY(-50%) scaleX(-1) rotate(-15deg);
+    }
+
+    50% {
+        transform: translateY(-54%) scaleX(-1) rotate(-10deg);
+    }
+}
+
+.hammer-left {
+    left: -2%;
+    transform: translateY(-50%) rotate(-5deg);
+    animation: floatLeft 6s ease-in-out infinite;
+}
+
+.hammer-right {
+    right: -2%;
+    transform: translateY(-50%) scaleX(-1) rotate(-5deg);
+    animation: floatRight 7s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
+
+h1 {
+    font-family: 'Metal Mania', cursive;
+    font-size: 5.5rem;
+    margin: 0;
+    color: #fff;
+    text-shadow:
+        0 0 20px rgba(192, 132, 252, 0.4),
+        0 0 60px rgba(192, 132, 252, 0.2);
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    opacity: 0.7;
+    margin-bottom: 3rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(192, 132, 252, 0.3);
+}
+
+/* Folder Selection - Sleek Pill */
+.folder-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 3rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 5px;
+    transition: all 0.3s ease;
+}
+
+.folder-group:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px rgba(192, 132, 252, 0.15);
+}
+
+.folder-group span {
+    font-size: 0.75rem;
+    color: #888;
+    padding-left: 15px;
+    font-weight: 600;
+}
+
+.folder-path {
+    padding: 8px 15px !important;
+    font-family: monospace;
+    font-size: 0.85rem !important;
+    color: #ccc !important;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.folder-btn {
+    background: var(--accent-color);
+    border: none;
+    color: #000;
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: transform 0.2s;
+}
+
+.folder-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--accent-color);
+}
+
+.folder-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    margin-left: 5px;
+}
+
+.folder-btn.secondary:hover {
+    background: var(--accent-color);
+    color: #000;
+}
+
+/* Input Area - Futuristic Underline */
+.input-group {
+    position: relative;
+    margin-bottom: 3rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.input-group:focus-within {
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px;
+    color: #fff;
+    font-size: 1.1rem;
+    font-family: 'Segoe UI', sans-serif;
+    outline: none;
+    text-align: center;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+input[type="text"]::placeholder {
+    color: #444;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+}
+
+input[type="text"]:focus {
+    border-bottom-color: var(--accent-color);
+    box-shadow: 0 1px 0 var(--accent-color);
+}
+
+
+
+/* Checkbox Style */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 2rem;
+    color: #aaa;
+    font-size: 0.8rem;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+
+.checkbox-group input {
+    accent-color: var(--accent-color);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    cursor: pointer;
+}
+
+.checkbox-group input:checked+label {
+    color: var(--accent-color);
+    text-shadow: 0 0 5px var(--accent-color);
+}
+
+/* Big Glitch Button */
+button.main-btn {
+    position: relative;
+    width: 100%;
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    font-family: 'Metal Mania', cursive;
+    font-size: 1.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    overflow: hidden;
+    transition: 0.3s;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+}
+
+button.main-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(192, 132, 252, 0.2), transparent);
+    transition: 0.5s;
+}
+
+button.main-btn:hover::before {
+    left: 100%;
+}
+
+button.main-btn:hover {
+    border-color: var(--accent-color);
+    text-shadow: 0 0 10px var(--accent-color);
+    letter-spacing: 6px;
+    background: rgba(192, 132, 252, 0.05);
+}
+
+button.main-btn:active {
+    background: var(--accent-color);
+    color: #000;
+}
+
+/* Logs */
+.log-container {
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    height: 120px;
+    overflow-y: auto;
+    text-align: left;
+    padding: 15px 0;
+    font-family: 'Consolas', monospace;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.log-entry {
+    padding: 2px 0;
+    transition: all 0.2s;
+}
+
+.log-entry:hover {
+    background: rgba(255, 255, 255, 0.02);
+    padding-left: 5px;
+}
+
+.log-entry.success {
+    color: var(--accent-secondary);
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+}
+
+.log-entry.error {
+    color: #f87171;
+}
+
+.log-entry.info {
+    color: #777;
+}
+
+/* Format Select */
+.format-select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #444;
+    color: #00ffcc;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    margin-bottom: 5px;
+    /* Space between inputs */
+    outline: none;
+    text-transform: uppercase;
+}
+
+.format-select:focus {
+    border-color: #00ffcc;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+}
+
+.format-select option {
+    background: #000;
+    color: #fff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ... existing code ... */
+
+/* ONE UI / MOBILE ADAPTATION */
+@media (max-width: 768px) {
+    body {
+        align-items: flex-end;
+        /* Reachability: Push content down */
+        padding-bottom: 2rem;
+        background-color: #000;
+        /* AMOLED Black */
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+        height: 85vh;
+        /* Take up most of screen */
+        border-radius: 30px 30px 0 0;
+        /* One UI Bottom Sheet look */
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        background: linear-gradient(180deg, rgba(20, 20, 25, 0.95), #000);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Adjust Hammers */
+    .hammer-decor {
+        height: 60vh;
+        opacity: 0.4;
+        /* Fade them out a bit so text is readable */
+        z-index: 1;
+        /* Behind container */
+    }
+
+    .hammer-left {
+        left: -20%;
+        top: 30%;
+    }
+
+    .hammer-right {
+        right: -20%;
+        top: 30%;
+    }
+
+    /* Header Area (One UI "Viewing Area") */
+    h1 {
+        font-size: 3.5rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        margin-bottom: 2rem;
+        font-size: 0.75rem;
+    }
+
+    /* Controls (One UI "Interaction Area") */
+    .folder-group {
+        width: 100%;
+        justify-content: space-between;
+        padding: 8px;
+        margin-bottom: 2rem;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .folder-path {
+        max-width: 120px;
+    }
+
+    /* Inputs - Larger touch targets */
+    input[type="text"] {
+        padding: 15px;
+        /* Comfortable touch size */
+        font-size: 1.2rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid transparent;
+    }
+
+    input[type="text"]:focus {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .format-select {
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(20, 20, 30, 0.8);
+    }
+
+    .checkbox-group {
+        margin-bottom: 1.5rem;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+    }
+
+    .checkbox-group input {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Primary Action Button - Hero Button */
+    button.main-btn {
+        margin-top: auto;
+        /* Push to bottom if space permits */
+        border-radius: 25px;
+        /* Pill shape */
+        background: var(--accent-color);
+        color: #000;
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 800;
+        letter-spacing: 1px;
+        font-size: 1.2rem;
+        padding: 18px;
+        box-shadow: 0 5px 20px rgba(192, 132, 252, 0.4);
+        border: none;
+    }
+
+    button.main-btn::before {
+        display: none;
+        /* Remove glitch effect for cleaner mobile UI */
+    }
+
+    button.main-btn:hover,
+    button.main-btn:active {
+        transform: scale(0.98);
+        background: #a960fc;
+    }
+
+    /* Logs area */
+    .log-container {
+        height: 80px;
+        margin-top: 1rem;
+        font-size: 0.7rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* VIEW SYSTEM */
+.app-content {
+    width: 100%;
+    height: 100vh;
+    padding-bottom: 140px;
+    /* Space for Nav + Player */
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.view {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.view.active {
+    display: block;
+}
+
+/* LIBRARY VIEW */
+#library-view {
+    padding: 2rem;
+    padding-top: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.library-header h2 {
+    font-family: 'Metal Mania', cursive;
+    font-size: 2rem;
+    color: var(--accent-color);
+}
+
+.icon-btn {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.library-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.track-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.track-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
+}
+
+.track-item.active {
+    background: rgba(192, 132, 252, 0.2);
+    border-color: var(--accent-color);
+}
+
+.track-info {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.track-title {
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-meta {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.track-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.action-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.action-btn:hover {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+/* BOTTOM NAVIGATION */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: #000;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+}
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: #666;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    gap: 4px;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    padding-top: 8px;
+}
+
+.nav-btn span:first-child {
+    font-size: 1.2rem;
+}
+
+.nav-btn.active {
+    color: var(--accent-color);
+    background: rgba(192, 132, 252, 0.05);
+}
+
+/* PLAYER BAR (Sticky above nav) */
+.player-bar {
+    position: fixed;
+    bottom: 60px;
+    /* Above nav */
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(20, 20, 25, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    box-sizing: border-box;
+    z-index: 99;
+    transition: transform 0.3s;
+}
+
+.player-bar.hidden {
+    transform: translateY(100%);
+}
+
+.player-info {
+    flex-grow: 1;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+.player-title {
+    font-weight: bold;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #fff;
+}
+
+.player-artist {
+    font-size: 0.75rem;
+    color: var(--accent-color);
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.player-controls button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.player-controls button#playBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    color: #000;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 3px;
+    /* visual center fix */
+}
+
+.player-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--accent-color);
+    transition: width 0.1s linear;
+}
+
+/* Mobile Adjustments for Search View */
+@media (max-width: 768px) {
+    .container {
+        border-radius: 0 0 0 0 !important;
+        /* Reset radius for view */
+        height: auto;
+        min-height: 100%;
+        padding-bottom: 100px;
+    }
+}
