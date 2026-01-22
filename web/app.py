@@ -25,8 +25,12 @@ else:
 
 manager = DownloaderManager()
 
-import tkinter as tk
-from tkinter import filedialog
+try:
+    import tkinter as tk
+    from tkinter import filedialog
+    TK_AVAILABLE = True
+except ImportError:
+    TK_AVAILABLE = False
 import threading
 
 # Global to store current selection (in a real app per-session, but local tool global is fine)
@@ -39,6 +43,10 @@ def index():
 @app.route('/select_folder', methods=['POST'])
 def select_folder():
     global current_output_dir
+    
+    if not TK_AVAILABLE:
+        return jsonify({"status": "error", "message": "Folder selection not supported on Android"}), 501
+
     # Tkinter needs to run in main thread usually, or at least be handled carefully.
     # We create a hidden root window.
     try:
@@ -63,9 +71,12 @@ def open_folder():
         if not os.path.exists(current_output_dir):
             os.makedirs(current_output_dir)
             
-        # Windows only startfile
-        os.startfile(current_output_dir)
-        return jsonify({"status": "success"})
+        if hasattr(os, 'startfile'):
+            # Windows only startfile
+            os.startfile(current_output_dir)
+            return jsonify({"status": "success"})
+        else:
+             return jsonify({"status": "error", "message": "Cannot open folder on this platform"}), 501
     except Exception as e:
         print(f"Error opening folder: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
