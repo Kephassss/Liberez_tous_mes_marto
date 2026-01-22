@@ -7,7 +7,7 @@ source.include_exts = py,png,jpg,kv,atlas,html,css,js,txt,json
 version = 1.0
 
 # Dependencies
-requirements = python3,kivy,flask,requests,yt-dlp,mutagen,android,jnius,openssl,sqlite3,certifi,urllib3,beautifulsoup4,ffmpeg
+requirements = python3,kivy,flask,requests,yt-dlp,mutagen,android,jnius,openssl,sqlite3,certifi,urllib3,beautifulsoup4
 
 # Permissions
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE

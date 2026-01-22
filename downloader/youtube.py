@@ -26,9 +26,7 @@ class YouTubeDownloader(BaseDownloader):
         
         # Mobile Optimization: No FFmpeg/Conversion
         # We download 'm4a' directly which is native Android audio.
-        postprocessors = [
-            {'key': 'FFmpegMetadata', 'add_metadata': True},
-        ]
+        postprocessors = []
         if not no_cover:
             postprocessors.append({'key': 'EmbedThumbnail'})
 
