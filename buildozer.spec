@@ -4,18 +4,18 @@ package.name = marto
 package.domain = org.marto
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,html,css,js,txt,json
-version = 1.0
+version = 1.1
 
 # Dependencies
-requirements = python3,kivy,flask,requests,yt-dlp,mutagen,android,jnius,openssl,sqlite3,certifi,urllib3,beautifulsoup4
+requirements = python3,kivy,flask,requests,yt-dlp,mutagen,android,pyjnius,openssl,sqlite3,certifi,urllib3,beautifulsoup4,werkzeug,jinja2,markupsafe,brotli
 
 # Permissions
-android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
+android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,FOREGROUND_SERVICE
 
 # Android Specifics
 android.api = 31
 android.minapi = 21
-android.archs = arm64-v8a
+android.archs = arm64-v8a, armeabi-v7a
 
 # Orientation
 orientation = portrait
