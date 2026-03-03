@@ -28,10 +28,20 @@ jobs:
           
       - name: Build with Buildozer
         run: |
-          yes | buildozer android debug --verbose
+          yes | buildozer android debug --verbose > buildozer_output.txt 2>&1 || (cat buildozer_output.txt && exit 1)
+
+      - name: Upload Logs on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            buildozer_output.txt
+            .buildozer/android/platform/build-*/build/build.log
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: marto-app
           path: bin/*.apk
+
